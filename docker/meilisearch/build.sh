@@ -1,0 +1,1 @@
+docker pull getmeili/meilisearch:v0.27.2

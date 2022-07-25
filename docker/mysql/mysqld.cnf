@@ -1,0 +1,61 @@
+[client]
+default-character-set=utf8mb4
+
+[mysql]
+default-character-set=utf8mb4
+
+[mysqld]
+port = 3306
+pid-file        = /var/run/mysqld/mysqld.pid
+socket          = /var/run/mysqld/mysqld.sock
+datadir         = /var/lib/mysql
+
+default-time_zone='+8:00'
+character_set_server=utf8mb4
+collation-server=utf8mb4_unicode_ci
+character-set-client-handshake=FALSE
+init_connect='SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci'
+
+skip-host-cache
+skip-name-resolve
+
+max_connections = 500
+max_connect_errors = 200
+open_files_limit = 8000
+max_allowed_packet = 500M
+max_binlog_size  = 100M
+
+
+innodb_buffer_pool_size = 2000M
+innodb_log_file_size = 100M
+innodb_log_buffer_size = 8M
+innodb_flush_log_at_trx_commit = 1
+innodb_lock_wait_timeout = 50
+innodb_file_per_table
+
+net_read_timeout = 180
+net_write_timeout = 360
+
+wait_timeout = 604800
+interactive_timeout = 604800
+
+server-id=1
+log-bin=mysql-bin #从库会基于此log-bin来做复制
+binlog-format=ROW # 选择row模式
+binlog-do-db=label_data #用于读写分离的具体数据库
+binlog-do-db=label_db
+binlog_ignore_db=mysql #不用于读写分离的具体数据库
+binlog_ignore_db=information_schema #和binlog-do-db一样，可以设置多个
+
+slow_query_log=1
+skip-name-resolve
+thread_stack = 512k
+long_query_time=0.4
+bind-address = 0.0.0.0
+
+#skip-log-bin # 关闭binlog
+expire_logs_days=5 # 保留指定天数的binlog
+
+sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+
+!includedir /etc/mysql/conf.d/
