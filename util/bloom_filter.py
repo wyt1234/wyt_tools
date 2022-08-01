@@ -5,6 +5,8 @@ import redis
 from loguru import logger
 from xwtools.config_log import config
 
+'''布隆过滤器-redis实现'''
+
 
 class RedisDB:
 
