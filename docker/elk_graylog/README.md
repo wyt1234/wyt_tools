@@ -1,0 +1,8 @@
+- Graylog就定位为强大的日志解决方案，而ELK则是大数据解决方案。Graylog可以通过网络协议直接从应用程序接收结构化日志和标准syslog。相反，ELK是使用Logstash分析已收集的纯文本日志的解决方案，然后解析并将它们传递给ElasticSearch。
+
+- 在ELK中，Kibana扮演仪表盘的角色并显示从Logstash收到的数据。Graylog在这点上更方便，因为它提供了单一应用程序解决方案（不包括ElasticSearch作为灵活的数据存储），具有几乎相同的功能。因此，部署所需的时间更短。此外，与ELK相比，Graylog开箱即用，且具有出色的权限系统，而Kibana则不具备此功能。作为Elasticsearch的粉丝，我更喜欢Graylog而不是ELK，因为它完全符合我在日志管理方面的需求。
+
+- Graylog具有直观的GUI，并提供警报、报告和自定义分析功能。最重要的是，它能在多个日志源和跨机房收集数TB的数据。基于这些优势，我更喜欢用Graylog而不是另一个具有类似功能的流行堆栈——ELK。
+
+
+# 偏向graylog
