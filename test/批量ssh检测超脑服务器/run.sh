@@ -49,7 +49,7 @@ do
 	scp_exec >> ${LOG_FILE} 2>&1
 	ssh_exec >> ${LOG_FILE} 2>&1
   total_num=`expr $total_num + 1`
-	success_num=`grep -o '/root' ${LOG_FILE}  |wc -l`
+	success_num=`grep -o '64 bytes from 192.168.0.254' ${LOG_FILE}  |wc -l`
 	echo "成功数/总数：${success_num}/${total_num}"
 done
 rm -rf ${TMP_FILE}
