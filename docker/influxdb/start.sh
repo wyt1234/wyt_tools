@@ -3,7 +3,8 @@
 docker run \
   --name influxdb \
   -p 8086:8086 \
-  --volume /data/influxdb:/var/lib/influxdb2 \
+  --restart=always \
+  --volume /home/influxdb:/var/lib/influxdb2 \
   -d \
   influxdb:2.4.0
 
