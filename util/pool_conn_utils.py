@@ -56,6 +56,10 @@ class pool_util():
                 charset='utf8'
             )
 
+    # 类销毁时释放全部连接
+    def __del__(self):
+        self.POOL.close()
+
     # 打开连接
     def create_conn(self):
         conn = self.POOL.connection()
@@ -143,3 +147,15 @@ class pool_util():
         sql = sql[:-1]
         sql += ')'
         self.execute(sql)
+
+    # in语句拼接助手 -> 拼接in括号里的内容
+    def in_paragraph_helper(self, ids):
+        in_paragraph = '('
+        for id in ids:
+            in_paragraph += "'"
+            in_paragraph += id
+            in_paragraph += "'"
+            in_paragraph += ","
+        in_paragraph = in_paragraph[:-1]
+        in_paragraph += ")"
+        return in_paragraph
