@@ -1,0 +1,44 @@
++------------------------------------------------------------------------+--------+
+| apiname                                                                | method |
++------------------------------------------------------------------------+--------+
+| https://www.sci-brain.cn/sci_brain/science_knowledge_graph_by_node_ids | POST   |
+| https://www.sci-brain.cn/sci_brain/science_knowledge_subjects          | GET    |
+| https://www.sci-brain.cn/sci_brain/science_knowledge_search            | GET    |
+| https://www.sci-brain.cn/sci_brain/science_knowledge_parents           | GET    |
+| https://www.sci-brain.cn/sci_brain/science_knowledge_graph_by_layer    | POST   |
+| https://www.sci-brain.cn/sci_brain/science_knowlege_subject_detail     | GET    |
+| https://www.sci-brain.cn/sci_brain/website_news_add                    | POST   |
+| https://www.sci-brain.cn/sci_brain/website_news_list                   | GET    |
+| https://www.sci-brain.cn/sci_brain/website_news_detail                 | GET    |
+| https://www.sci-brain.cn/sci_brain/website_news_delete                 | GET    |
+| https://www.sci-brain.cn/sci_brain/website_news_update                 | PATCH  |
+| https://www.sci-brain.cn/sci_brain/website_upload_img                  | POST   |
+| https://www.sci-brain.cn/sci_brain/website_show_img                    | GET    |
+| https://www.sci-brain.cn/sci_brain/multilingual_big_model              | GET    |
+| https://www.sci-brain.cn/sci_brain/multilingual_big_model/:uuid        | GET    |
+| https://www.sci-brain.cn/sci_brain/multilingual_big_model/add          | POST   |
+| https://www.sci-brain.cn/sci_brain/multilingual_big_model/remark       | POST   |
+| https://www.sci-brain.cn/sci_brain/multilingual_big_model/privacy      | PATCH  |
+| https://www.sci-brain.cn/sci_brain/industry_news                       | GET    |
+| https://www.sci-brain.cn/sci_brain/home_news                           | GET    |
+| https://www.sci-brain.cn/sci_brain/recall_topic                        | GET    |
+| https://www.sci-brain.cn/sci_brain/pingback                            | GET    |
+| https://www.sci-brain.cn/sci_brain/like                                | GET    |
+| https://www.sci-brain.cn/sci_brain/folders                             | GET    |
+| https://www.sci-brain.cn/sci_brain/add_folder                          | GET    |
+| https://www.sci-brain.cn/sci_brain/add_collect                         | GET    |
+| https://www.sci-brain.cn/sci_brain/industry_word                       | GET    |
+| https://www.sci-brain.cn/sci_brain/headline                            | GET    |
+| https://www.sci-brain.cn/sci_brain/industry_card                       | GET    |
+| https://www.sci-brain.cn/sci_brain/follow                              | GET    |
+| https://www.sci-brain.cn/sci_brain/similarity_search                   | GET    |
+| https://www.sci-brain.cn/sci_brain/zhiyin_iframe                       | GET    |
+| https://www.sci-brain.cn/sci_brain/item_related_person                 | GET    |
+| https://www.sci-brain.cn/sci_brain/item_graph                          | GET    |
+| https://www.sci-brain.cn/sci_brain/item_recommend_keywords             | GET    |
+| https://www.sci-brain.cn/sci_brain/raw_html                            | GET    |
+| https://www.sci-brain.cn/sci_brain/item_body_html                      | GET    |
+| https://www.sci-brain.cn/sci_brain/one_item_detail                     | GET    |
+| https://www.sci-brain.cn/sci_brain/hot_zhiyin_words                    | GET    |
+| https://www.sci-brain.cn/sci_brain/item_qr_code                        | GET    |
++------------------------------------------------------------------------+--------+
