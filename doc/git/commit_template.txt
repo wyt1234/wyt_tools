@@ -1,0 +1,17 @@
+[type] {message}
+{detail}
+# 例：
+# [feat] 一键刷新所有智库
+# 添加了新的api /magic/refreshEB
+# 调用此api可以刷新所有智库信息
+# 调用需要 admin 权限 
+
+# [type] 的可选项：
+# feat 新功能
+# fix 修bug
+# docs 文档
+# style 格式修改
+# refactor 重构
+# test 测试
+# chore 构建、辅助工具的改动
+# revert 撤回此前提交 
