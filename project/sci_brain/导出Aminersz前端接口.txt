@@ -1,0 +1,34 @@
++-----------------------------------------+----------+-----------------------------------------------------------------------------------+
+| 接口名称                                | 系统名称 | 接口路径                                                                          |
++-----------------------------------------+----------+-----------------------------------------------------------------------------------+
+| userLogin                               | Aminer   | https://api.aminer.cn/api/auth/signin                                             |
+| userLogout                              | Aminer   | https://api.aminer.cn/api/auth/signout                                            |
+| signup                                  | Aminer   | https://api.aminer.cn/api/auth/signup                                             |
+| checkAminerEmail                        | Aminer   | https://api.aminer.cn/api/user/check/:email                                       |
+| updatePassword                          | Aminer   | https://api.aminer.cn/api/auth/update/passwd                                      |
+| forgot                                  | Aminer   | https://api.aminer.cn/api/auth/update/forgot                                      |
+| retrieve                                | Aminer   | https://api.aminer.cn/api/auth/update/token                                       |
+| searchPersonAgg                         | Aminer   | https://api.aminer.cn/api/search/person/agg                                       |
+| searchPersonInBase                      | Aminer   | https://api.aminer.cn/api/search/roster/:ebid/experts/advanced                    |
+| allPersonInBase                         | Aminer   | https://api.aminer.cn/api/roster/:ebid/offset/:offset/size/:size                  |
+| allPersonInBaseWithSort                 | Aminer   | https://api.aminer.cn/api/roster/:ebid/order-by/:sort/offset/:offset/size/:size   |
+| searchSuggest                           | Aminer   | https://api.aminer.cn/api/search/suggest/gen/:query                               |
+| translateTerm                           | Aminer   | https://api.aminer.cn/api/abbreviation/mapping/:term                              |
+| personProfile                           | Aminer   | https://api.aminer.cn/api/person/summary/:id                                      |
+| personEmailImg                          | Aminer   | https://api.aminer.cn/api/person/email/i/                                         |
+| personEmailStr                          | Aminer   | https://api.aminer.cn/api/person/email/s/:id                                      |
+| getEmailCrImage                         | Aminer   | https://api.aminer.cn/api/person/email-cr/i/                                      |
+| listPersonByIds                         | Aminer   | https://api.aminer.cn/api/person/batch-list                                       |
+| getActivityAvgScoresByPersonId          | Aminer   | https://api.aminer.cn/api/person/activity/:id/indices                             |
+| batchGetActivityCompareScoresByPersonId | Aminer   | https://api.aminer.cn/api/person/activity/:ids/batch/indices                      |
+| pubList                                 | Aminer   | https://api.aminer.cn/api/person/pubs/:id/all/year/:offset/:size                  |
+| votePersonInSomeTopicById               | Aminer   | https://api.aminer.cn/api/topic/person/vote/:oper/:aid/id/:tid                    |
+| unvotePersonInSomeTopicById             | Aminer   | https://api.aminer.cn/api/topic/person/vote/:aid/id/:tid                          |
+| getToBProfileByAid                      | Aminer   | https://api.aminer.cn/api/2b/profile/:src/aid/:id                                 |
+| getExpertBase                           | Aminer   | https://api.aminer.cn/api/roster/list/:type/offset/:offset/size/:size             |
+| addExpertBaseApi                        | Aminer   | https://api.aminer.cn/api/roster                                                  |
+| deleteExpertBaseApi                     | Aminer   | https://api.aminer.cn/api/roster/:rid                                             |
+| getExpertDetailList                     | Aminer   | https://api.aminer.cn/api/roster/:ebid/order-by/h_index/offset/:offset/size/:size |
+| invokeRoster                            | Aminer   | https://api.aminer.cn/api/roster/:id/members/u                                    |
+| UploadFile                              | Aminer   | https://apiv2.aminer.cn/magic                                                     |
++-----------------------------------------+----------+-----------------------------------------------------------------------------------+
