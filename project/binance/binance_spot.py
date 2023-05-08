@@ -8,8 +8,9 @@ from datetime import datetime
 import time
 import configparser
 
-'''测试网'''
+from binance.spot.convert import convert_trade_history
 
+''' Binance Real !!!!'''
 
 # 读取配置文件
 config = configparser.ConfigParser()
@@ -19,18 +20,27 @@ config.read('config.ini')
 api_key = config.get('BINANCE', 'api_key')
 api_secret = config.get('BINANCE', 'api_secret')
 
+spot_client = Spot(api_key, api_secret)
 
-spot_client = Spot(api_key, api_secret, testnet=True)
+
+# 查询历史记录
+def convert_history():
+    days = 30
+    end_time = int(time.time() * 1000)
+    start_time = end_time - days * 24 * 60 * 60 * 1000
+    converts = spot_client.convert_trade_history(start_time, end_time)
+    print(converts)
 
 
 def getQuote():
     # 设置要转换的资产和金额
     from_asset = 'BTC'
     to_asset = 'USDT'
-    from_amount = 0.1
+    from_amount = 0.01
     to_amount = None
     # 发送获取报价请求
-    response = spot_client.sapi_post('/sapi/v1/convert/getQuote', params={
+    url_path = '/sapi/v1/convert/getQuote'
+    payload = {
         'fromAsset': from_asset,
         'toAsset': to_asset,
         'fromAmount': from_amount,
@@ -38,10 +48,12 @@ def getQuote():
         'walletType': 'SPOT',
         'validTime': '10s',
         'timestamp': int(time.time() * 1000)
-    })
+    }
+    response = spot_client.sign_request("POST", url_path, payload)
     # 打印获取报价请求的响应
     print(response)
 
 
 if __name__ == '__main__':
     getQuote()
+    # convert_history()

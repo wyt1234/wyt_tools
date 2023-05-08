@@ -1,10 +1,11 @@
+import time
+
 import okx.Trade as Trade
 
 import okx.Funding as Funding
 import okx.Convert as Convert
 
 import configparser
-
 
 # 读取配置文件
 config = configparser.ConfigParser()
@@ -29,15 +30,16 @@ def get_currencies():
 def estimate_quote():
     baseCcy = "BTC"
     quoteCcy = "USDT"
-    side = "buy"
-    rfqSz = "0.3"
-    rfqSzCcy = "USDT"
-    clQReqId = "testorder111"
-    tag = ""
-    result = convertAPI.estimate_quote(baseCcy, quoteCcy, side, rfqSz, rfqSzCcy, clQReqId, tag)
-    print(result)
+    side = "sell"
+    rfqSz = "0.01"
+    rfqSzCcy = "BTC"
+    result = convertAPI.estimate_quote(baseCcy, quoteCcy, side, rfqSz, rfqSzCcy)
+    # print(result)
+    print(f"：{result['data'][0]['cnvtPx']}")
 
 
 if __name__ == '__main__':
-    get_currencies()
-    # estimate_quote()
+    # get_currencies()
+    for i in range(30):
+        estimate_quote()
+        time.sleep(1)
