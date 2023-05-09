@@ -1,9 +1,12 @@
 from PIL import Image
 from pathlib import Path
 
+'''
+scp /Users/wyt/dataset/产业缺省图片0509/*.jpg root@192.168.0.36:/home/aminer/ftp/industry_default_picture/
+'''
 
 def run():
-    input_dir = '/Users/wyt/Downloads/产业资讯配图'
+    input_dir = '/Users/wyt/Downloads/产业资讯配图0509'
     output_dir = '/Users/wyt/dataset/industry_default_picture'
     p_list = Path(input_dir).rglob('*')
     for p in p_list:
