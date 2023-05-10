@@ -25,8 +25,8 @@ api_client = gate_api.ApiClient(configuration)
 # Create an instance of the API class
 api_instance = gate_api.FlashSwapApi(api_client)
 
-
-def preview_request():
+# BTC -> USDT
+def preview_request_sell():
     sell_currency = "BTC"
     sell_amount = "0.01"
     buy_currency = "USDT"
@@ -37,9 +37,24 @@ def preview_request():
     # print(api_response)
     return api_response
 
+# USDT -> BTC
+def preview_request_buy():
+    sell_currency = "USDT"
+    sell_amount = "1000"
+    buy_currency = "BTC"
+    flash_swap_preview_request = gate_api.FlashSwapPreviewRequest(sell_currency=sell_currency, sell_amount=sell_amount,
+                                                                  buy_currency=buy_currency)
+    # Initiate a flash swap order preview
+    api_response = api_instance.preview_flash_swap_order(flash_swap_preview_request)
+    # print(api_response)
+    return api_response
 
 if __name__ == '__main__':
     for i in range(20):
-        api_response = preview_request()
-        print(api_response.price)
+        api_response1 = preview_request_buy()
+        api_response2 = preview_request_sell()
+        print(1/float(api_response1.price))
+        print(api_response1.price)
+        print(api_response2.price)
+        print('----')
         time.sleep(1)
