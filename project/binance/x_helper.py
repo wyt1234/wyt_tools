@@ -25,15 +25,17 @@ def update_influxdb(HISTORY: List[BASE_QUOTE]):
     write_api = client.write_api(write_options=SYNCHRONOUS)
     query_api = client.query_api()
     bucket = "flash_swap"
+    latest_timestamp = None
     while True:
         # 查询 InfluxDB 中最新的时间戳
-        query = f'from(bucket: "{bucket}") |> range(start: -1d) |> last()'
-        result = query_api.query(query)
-        latest_timestamp = None
-        if result:
-            for table in result:
-                for record in table.records:
-                    latest_timestamp = record.get_time().timestamp() * 1000  # 纳秒转换为秒
+        if not latest_timestamp:
+            query = f'from(bucket: "{bucket}") |> range(start: -5s) |> last()'
+            result = query_api.query(query)
+            if result:
+                for table in result:
+                    for record in table.records:
+                        latest_timestamp = record.get_time().timestamp() * 1000  # fixme 这里的时间转换可能还有问题 纳秒转换为秒
+                        print(f'更新时间戳：{latest_timestamp}')
         points = []
         for item in HISTORY:
             # 空，跳过
@@ -64,6 +66,9 @@ def update_influxdb(HISTORY: List[BASE_QUOTE]):
                         .field("endTime", int(item.endTime)) \
                         .field("ttlMs", int(item.ttlMs)) \
                         .time(int(item.createTime) * 1000000)  # InfluxDB 需要纳秒级时间戳
+                # 更新时间戳
+                if latest_timestamp:
+                    latest_timestamp = item.createTime if item.createTime > latest_timestamp else latest_timestamp
                 points.append(point)
         if points:
             write_api.write(bucket, record=points)
