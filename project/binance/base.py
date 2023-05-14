@@ -29,6 +29,8 @@ class BASE_QUOTE:
 
     # 是否存活
     def is_alive(self):
+        if not self.endTime:
+            return False
         return self.endTime > int(time.time() * 1000)
 
 
@@ -37,6 +39,7 @@ class TICK(BASE_QUOTE):
     def __init__(self):
         super().__init__()
         self.type = 'tick'
+        self.ttlMs = 0  # 窗口长度
         self.last = float(0)
         self.lastSz = float(0)
 
