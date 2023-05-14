@@ -1,6 +1,7 @@
 import time
 
 import okx_spot
+from x_helper import monitor_alive_and_history, update_prometheus, update_influxdb
 from thread_util import QuoteManager
 import threading
 from prettytable import PrettyTable
@@ -30,40 +31,18 @@ HISTORY = []
 def okx_runner():
     c = okx_spot.OKX_SPOT()
     # all currencies
-    currencies = c.get_currencies()
+    currencies = c.flash_swap_get_currencies()
     while True:
         for i, o in currencies:
             q1 = c.flash_swap_fetch_flash_swap_buy_side(i, o, 10)
             q2 = c.flash_swap_fetch_flash_swap_sell_side(o, i, 10)
+            tick = c.ticker_fetch(i, o)
             HISTORY.append(q1)
             ALIVE.add_quote(q1)
             HISTORY.append(q2)
             ALIVE.add_quote(q2)
-            time.sleep(3)
-
-
-def monitor_alive_and_history():
-    def print_table(alive_count, history_count):
-        table = PrettyTable()
-        table.field_names = ["Metrics", "Count"]
-        table.add_row(["ALIVE", alive_count])
-        table.add_row(["HISTORY", history_count])
-        print(table)
-
-    def clear_console():
-        if os.name == 'posix':  # Unix/Linux/MacOS/BSD
-            os.system('clear')
-        elif os.name == 'nt':  # Windows
-            os.system('cls')
-
-    while True:
-        # 执行ALIVE清理
-        ALIVE.remove_dead_quotes()
-        alive_count = len(ALIVE.live_quotes)
-        history_count = len(HISTORY)
-        # clear_console()
-        print_table(alive_count, history_count)
-        time.sleep(1)
+            HISTORY.append(tick)
+            time.sleep(1.5)
 
 
 if __name__ == '__main__':
@@ -74,9 +53,13 @@ if __name__ == '__main__':
     ths.append(runner_thread)
     # ...
     # monitor
-    monitor_thread = threading.Thread(target=monitor_alive_and_history)
+    monitor_thread = threading.Thread(target=monitor_alive_and_history, args=(ALIVE, HISTORY))
     monitor_thread.start()
     ths.append(monitor_thread)
-    # 等待线程执行完成
+    # push
+    push_thread = threading.Thread(target=update_influxdb, args=(HISTORY,))
+    push_thread.start()
+    ths.append(push_thread)
+    #
     for t in ths:
         t.join()

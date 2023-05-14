@@ -3,12 +3,14 @@ import time
 from typing import Dict
 
 
+#
 class BASE_QUOTE:
     def __init__(self):
         # 属性
         self.quoteId = ''
         self.fromAsset = ''
         self.toAsset = ''
+        self.type = 'flash_swap'  # 类型（flash_swap、tick等）
         # 报价
         self.fromAmount = ''  # 来源数量
         self.toAmount = ''  # 目标数量
@@ -30,13 +32,22 @@ class BASE_QUOTE:
         return self.endTime > int(time.time() * 1000)
 
 
+# TICK类型
+class TICK(BASE_QUOTE):
+    def __init__(self):
+        super().__init__()
+        self.type = 'tick'
+        self.last = float(0)
+        self.lastSz = float(0)
+
+
 class BASE_SPOT:
     def __init__(self):
         self.market_name = 'base'
         self.history_quotes = []  # [BASE_QUOTE()]
         self.alive_quotes = []  # [BASE_QUOTE()]
 
-    def get_currencies(self):
+    def flash_swap_get_currencies(self):
         return [('BTC', 'USDT')]
 
     # 获取闪兑报价（buy USDT方向：BTC -> USDT）
@@ -59,8 +70,8 @@ class BASE_SPOT:
         return
 
     # 市价
-    def fetch_ticker(self) -> Dict:
-        return {'market_name': self.market_name, 'ts': 111111, 'last': 1}
+    def ticker_fetch(self, i, o) -> TICK:
+        return TICK()
 
     # 账户余额
     def account_refresh_balance(self):

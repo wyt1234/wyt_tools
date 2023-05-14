@@ -8,7 +8,7 @@ from okx.MarketData import MarketAPI
 
 import configparser
 
-from base import BASE_SPOT, BASE_QUOTE
+from base import BASE_SPOT, BASE_QUOTE, TICK
 
 
 class OKX_SPOT(BASE_SPOT):
@@ -33,11 +33,23 @@ class OKX_SPOT(BASE_SPOT):
         # result = marketAPI.get_ticker(instId='BTC-USD-SWAP')
         # print(result)
         result = self.marketAPI.get_ticker(instId)
-        print(result)
+        # print(result)
         return result
 
+    def ticker_fetch(self, i, o) -> TICK:
+        instId = i + '-' + o + '-SWAP'
+        result = self.market_ticker(instId)['data'][0]
+        tick = TICK()
+        tick.market_name = self.market_name
+        tick.createTime = int(result['ts'])
+        tick.fromAsset = i
+        tick.toAsset = o
+        tick.last = result['last']
+        tick.lastSz = result['lastSz']
+        return tick
+
     # 获取闪兑币种列表(欧易有300+种)
-    def get_currencies(self):
+    def flash_swap_get_currencies(self):
         # result = self.convertAPI.get_currencies()
         # print(result)
         # ccys = [x['ccy'] for x in result['data']]
@@ -64,7 +76,7 @@ class OKX_SPOT(BASE_SPOT):
         quote.ttlMs = int(result['ttlMs'])
         quote.fromAmount = result['rfqSz']
         quote.toAmount = result['quoteSz']
-        quote.cnvtPx = result['origRfqSz']
+        quote.cnvtPx = result['cnvtPx']
         quote.quoteSz = result['quoteSz']
         quote.side = 1
         self.alive_quotes.append(quote)
@@ -102,9 +114,9 @@ if __name__ == '__main__':
     # c.get_currencies()
     # estimate_quote_sell()
     # c.estimate_quote_buy()
-    c.flash_swap_fetch_flash_swap_buy_side('BTC', 'USDT', 0.1)
-    c.flash_swap_fetch_flash_swap_sell_side('USDT', 'BTC', 100)
-    # c.market_ticker()
+    # c.flash_swap_fetch_flash_swap_buy_side('BTC', 'USDT', 0.1)
+    # c.flash_swap_fetch_flash_swap_sell_side('USDT', 'BTC', 100)
+    c.market_ticker()
 
     # for i in range(30):
     #     estimate_quote_sell()
