@@ -2,7 +2,7 @@ import time
 
 import okx_spot
 from x_helper import monitor_alive_and_history, update_prometheus, update_influxdb
-from thread_util import QuoteManager
+from thread_util import QuoteManager, SnowflakeIDGenerator
 import threading
 from prettytable import PrettyTable
 import os
@@ -23,6 +23,8 @@ thread for trade（option）：
 thread for update balance（option）
 '''
 
+serial_generator = SnowflakeIDGenerator(machine_id=1)  # 全局序列号生成器
+
 ALIVE = QuoteManager()  # 存活Quote，线程安全
 HISTORY = []
 
@@ -35,13 +37,19 @@ def okx_runner():
     while True:
         for i, o in currencies:
             q1 = c.flash_swap_fetch_flash_swap_buy_side(i, o, 10)
-            q2 = c.flash_swap_fetch_flash_swap_sell_side(o, i, 10)
-            tick = c.ticker_fetch(i, o)
+            q1.serial_num = serial_generator.get_next_id()
             HISTORY.append(q1)
             ALIVE.add_quote(q1)
+            #
+            q2 = c.flash_swap_fetch_flash_swap_sell_side(o, i, 10)
+            q2.serial_num = serial_generator.get_next_id()
             HISTORY.append(q2)
             ALIVE.add_quote(q2)
+            #
+            tick = c.ticker_fetch(i, o)
+            tick.serial_num = serial_generator.get_next_id()
             HISTORY.append(tick)
+            #
             time.sleep(1.5)
 
 

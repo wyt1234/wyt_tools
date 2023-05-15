@@ -6,6 +6,8 @@ from typing import Dict
 #
 class BASE_QUOTE:
     def __init__(self):
+        # 序列号
+        self.serial_num = 0  # 全局序列号
         # 属性
         self.quoteId = ''
         self.fromAsset = ''
@@ -29,7 +31,7 @@ class BASE_QUOTE:
 
     # 是否存活
     def is_alive(self):
-        if not self.endTime:
+        if self.type == 'tick':
             return False
         return self.endTime > int(time.time() * 1000)
 

@@ -26,23 +26,15 @@ def update_influxdb(HISTORY: List[BASE_QUOTE]):
     query_api = client.query_api()
     bucket = "flash_swap"
     latest_timestamp = None
+    HANDLED_SERIAL_NUMS = []  # 已经处理过的serial_num
     while True:
-        # 查询 InfluxDB 中最新的时间戳
-        if not latest_timestamp:
-            query = f'from(bucket: "{bucket}") |> range(start: -5s) |> last()'
-            result = query_api.query(query)
-            if result:
-                for table in result:
-                    for record in table.records:
-                        latest_timestamp = record.get_time().timestamp() * 1000  # fixme 这里的时间转换可能还有问题 纳秒转换为秒
-                        print(f'更新时间戳：{latest_timestamp}')
         points = []
         for item in HISTORY:
             # 空，跳过
             if not item:
                 continue
             # 只处理比最新时间戳更新的数据
-            if latest_timestamp is None or item.createTime > latest_timestamp:
+            if item.serial_num not in HANDLED_SERIAL_NUMS:
                 # tick
                 if isinstance(item, TICK):
                     point = Point("tick") \
@@ -69,6 +61,8 @@ def update_influxdb(HISTORY: List[BASE_QUOTE]):
                 # 更新时间戳
                 if latest_timestamp:
                     latest_timestamp = item.createTime if item.createTime > latest_timestamp else latest_timestamp
+                # 记录id
+                HANDLED_SERIAL_NUMS.append(item.serial_num)
                 points.append(point)
         if points:
             write_api.write(bucket, record=points)
@@ -76,6 +70,10 @@ def update_influxdb(HISTORY: List[BASE_QUOTE]):
         else:
             logger.info("No new points to write to InfluxDB")
             time.sleep(0.3)
+        #
+        if len(HANDLED_SERIAL_NUMS) > 10 * 10000:
+            HANDLED_SERIAL_NUMS = HANDLED_SERIAL_NUMS[-10000:]
+            logger.info('清理HANDLED_SERIAL_NUMS')
         time.sleep(0.3)  # 每1秒写入一次数据到 InfluxDB
 
 
