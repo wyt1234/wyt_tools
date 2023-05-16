@@ -37,18 +37,21 @@ def okx_runner():
     while True:
         for i, o in currencies:
             q1 = c.flash_swap_fetch_flash_swap_buy_side(i, o, 10)
-            q1.serial_num = serial_generator.get_next_id()
-            HISTORY.append(q1)
-            ALIVE.add_quote(q1)
+            if q1:
+                q1.serial_num = serial_generator.get_next_id()
+                HISTORY.append(q1)
+                ALIVE.add_quote(q1)
             #
             q2 = c.flash_swap_fetch_flash_swap_sell_side(o, i, 10)
-            q2.serial_num = serial_generator.get_next_id()
-            HISTORY.append(q2)
-            ALIVE.add_quote(q2)
+            if q2:
+                q2.serial_num = serial_generator.get_next_id()
+                HISTORY.append(q2)
+                ALIVE.add_quote(q2)
             #
             tick = c.ticker_fetch(i, o)
-            tick.serial_num = serial_generator.get_next_id()
-            HISTORY.append(tick)
+            if tick:
+                tick.serial_num = serial_generator.get_next_id()
+                HISTORY.append(tick)
             #
             time.sleep(1.5)
 

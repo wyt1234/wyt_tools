@@ -6,6 +6,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 # 定义脚本名称和日志文件路径
 SCRIPT_NAME="x_gather_flash_swap.py"
 LOG_FILE="$DIR/x_gather_flash_swap.log"
+# 定义重启间隔（分钟）
+RESTART_INTERVAL=15
 
 # 定义一个函数来处理 SIGINT 信号
 handle_sigint() {
@@ -35,8 +37,8 @@ while true; do
     # 获取 Python 进程的 PID
     PYTHON_PID=$!
 
-    # 等待1小时
-    sleep 3600 &
+    # 等待指定的分钟数
+    sleep $(($RESTART_INTERVAL * 60)) &
     SLEEP_PID=$!
 
     # 设置一个 trap，在 sleep 完成后杀掉 Python 进程

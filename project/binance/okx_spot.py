@@ -1,11 +1,12 @@
 import time
+from typing import Optional
 
 import okx.Trade as Trade
 
 import okx.Funding as Funding
 import okx.Convert as Convert
 from okx.MarketData import MarketAPI
-
+import okx
 import configparser
 
 from base import BASE_SPOT, BASE_QUOTE, TICK
@@ -32,13 +33,26 @@ class OKX_SPOT(BASE_SPOT):
     def market_ticker(self, instId='BTC-USDT-SWAP'):
         # result = marketAPI.get_ticker(instId='BTC-USD-SWAP')
         # print(result)
-        result = self.marketAPI.get_ticker(instId)
-        # print(result)
-        return result
+        max_retries = 3
+        retries = 0
+        while retries < max_retries:
+            try:
+                result = self.marketAPI.get_ticker(instId)
+                result = result['data'][0]
+                # print(result)
+                return result
+            except Exception as e:
+                print(f"Exception caught when calling market_ticker, retrying... [{retries + 1}/{max_retries}]")
+                retries += 1
+                time.sleep(1)  # Wait for 1 second before retrying
+        print("Max retries exceeded.")
+        return None
 
-    def ticker_fetch(self, i, o) -> TICK:
+    def ticker_fetch(self, i, o) -> Optional[TICK]:
         instId = i + '-' + o + '-SWAP'
-        result = self.market_ticker(instId)['data'][0]
+        result = self.market_ticker(instId)
+        if not result:
+            return
         tick = TICK()
         tick.market_name = self.market_name
         tick.createTime = int(result['ts'])
@@ -59,13 +73,26 @@ class OKX_SPOT(BASE_SPOT):
     # （闪兑）预估询价 +USDT方向 -> xxx-USDT
     # {'code': '0', 'data': [{'baseCcy': 'BTC', 'baseSz': '1', 'clQReqId': '', 'cnvtPx': '26329.8372', 'origRfqSz': '1', 'quoteCcy': 'USDT', 'quoteId': 'quoterBTC-USDT16838855299743749', 'quoteSz': '26329.8372', 'quoteTime': '1683885529974', 'rfqSz': '1', 'rfqSzCcy': 'BTC', 'side': 'sell', 'ttlMs': '10000'}], 'msg': ''}
     def estimate_quote_buy(self, baseCcy='BTC', quoteCcy='USDT', side='sell', rfqSz=0.1, rfqSzCcy='BTC'):
-        result = self.convertAPI.estimate_quote(baseCcy, quoteCcy, side, rfqSz, rfqSzCcy)
-        print(result)
-        print(f"：{result['data'][0]['cnvtPx']}")
-        return result
+        retries = 0
+        max_retries = 3
+        while retries < max_retries:
+            try:
+                result = self.convertAPI.estimate_quote(baseCcy, quoteCcy, side, rfqSz, rfqSzCcy)
+                result = result['data'][0]
+                print(result)
+                # print(f"：{result['data'][0]['cnvtPx']}")
+                return result
+            except Exception as e:
+                print(f"Exception caught when calling estimate_quote, retrying... [{retries + 1}/{max_retries}]")
+                retries += 1
+                time.sleep(1)  # Wait for 1 second before retrying
+        print("Max retries exceeded.")
+        return None
 
-    def flash_swap_fetch_flash_swap_buy_side(self, i, o, sz):
-        result = self.estimate_quote_buy(i, o, 'sell', sz, i)['data'][0]
+    def flash_swap_fetch_flash_swap_buy_side(self, i, o, sz) -> Optional[BASE_QUOTE]:
+        result = self.estimate_quote_buy(i, o, 'sell', sz, i)
+        if not result:
+            return
         quote = BASE_QUOTE()
         quote.quoteId = result['quoteId']
         quote.market_name = self.market_name
@@ -85,13 +112,26 @@ class OKX_SPOT(BASE_SPOT):
     # （闪兑）反USDT方向 -> USDT-xxx
     # {'code': '0', 'data': [{'baseCcy': 'BTC', 'baseSz': '0.0037811222518307', 'clQReqId': '', 'cnvtPx': '26447.1745', 'origRfqSz': '100', 'quoteCcy': 'USDT', 'quoteId': 'quoter2BTC-USDT16838867761883194', 'quoteSz': '100', 'quoteTime': '1683886776188', 'rfqSz': '100', 'rfqSzCcy': 'USDT', 'side': 'buy', 'ttlMs': '10000'}], 'msg': ''}
     def estimate_quote_sell(self, baseCcy='BTC', quoteCcy='USDT', side='buy', rfqSz=100, rfqSzCcy='USDT'):
-        result = self.convertAPI.estimate_quote(baseCcy, quoteCcy, side, rfqSz, rfqSzCcy)
-        print(result)
-        print(f"：{result['data'][0]['cnvtPx']}")
-        return result
+        max_retries = 3
+        retries = 0
+        while retries < max_retries:
+            try:
+                result = self.convertAPI.estimate_quote(baseCcy, quoteCcy, side, rfqSz, rfqSzCcy)
+                result = result['data'][0]
+                print(result)
+                # print(f"：{result['data'][0]['cnvtPx']}")
+                return result
+            except Exception as e:
+                print(f"Exception caught when calling estimate_quote, retrying... [{retries + 1}/{max_retries}]")
+                retries += 1
+                time.sleep(1)  # Wait for 1 second before retrying
+        print("Max retries exceeded.")
+        return None
 
-    def flash_swap_fetch_flash_swap_sell_side(self, i, o, sz):
-        result = self.estimate_quote_sell(o, i, 'buy', sz, i)['data'][0]
+    def flash_swap_fetch_flash_swap_sell_side(self, i, o, sz) -> Optional[BASE_QUOTE]:
+        result = self.estimate_quote_sell(o, i, 'buy', sz, i)
+        if not result:
+            return
         quote = BASE_QUOTE()
         quote.quoteId = result['quoteId']
         quote.market_name = self.market_name
