@@ -6,7 +6,7 @@ docker run \
   --restart=always \
   --volume /home/influxdb:/var/lib/influxdb2 \
   -d \
-  influxdb:2.4.0
+  influxdb:2.7.0
 
 # generate the default configuration file
 #docker run \
