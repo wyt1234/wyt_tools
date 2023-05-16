@@ -1,4 +1,9 @@
 #!/bin/bash
+# 设置 HTTP 和 HTTPS 代理
+export HTTP_PROXY="http://127.0.0.1:4780"
+export HTTPS_PROXY="http://127.0.0.1:4780"
+echo "已设置 HTTP 代理为: $HTTP_PROXY"
+echo "已设置 HTTPS 代理为: $HTTPS_PROXY"
 
 # 获取当前脚本所在的目录
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
@@ -44,7 +49,7 @@ while true; do
     # 设置一个 trap，在 sleep 完成后杀掉 Python 进程
     trap "kill $PYTHON_PID 2> /dev/null" 0
 
-    # 等待 sleep 完成
+    # 等待 sleep 完成（这个会触发trap 0 信号）
     wait $SLEEP_PID
 
     # 移除 trap
