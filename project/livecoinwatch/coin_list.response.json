@@ -1,0 +1,86 @@
+[
+  {
+    "name": "Bitcoin",
+    "symbol": "₿",
+    "rank": 1,
+    "age": 5257,
+    "color": "#fa9e32",
+    "png32": "https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/32/btc.png",
+    "png64": "https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/64/btc.png",
+    "webp32": "https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/32/btc.webp",
+    "webp64": "https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/64/btc.webp",
+    "exchanges": 200,
+    "markets": 3421,
+    "pairs": 1061,
+    "categories": [],
+    "allTimeHighUSD": 68780.77475755227,
+    "circulatingSupply": 19385225,
+    "totalSupply": 19385225,
+    "maxSupply": 21000000,
+    "links": {
+      "website": "https://bitcoin.org/",
+      "whitepaper": "https://bitcoin.org/bitcoin.pdf",
+      "twitter": null,
+      "reddit": "https://reddit.com/r/bitcoin",
+      "telegram": null,
+      "discord": null,
+      "medium": null,
+      "instagram": null
+    },
+    "code": "BTC",
+    "rate": 26780.356446192764,
+    "volume": 7468929411,
+    "cap": 519143235290,
+    "delta": {
+      "hour": 0.9997,
+      "day": 1.0048,
+      "week": 0.9923,
+      "month": 0.9258,
+      "quarter": 1.1491,
+      "year": 0.9168
+    }
+  },
+  {
+    "name": "Ethereum",
+    "symbol": "Ξ",
+    "rank": 2,
+    "age": 2858,
+    "color": "#282a2a",
+    "png32": "https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/32/eth.png",
+    "png64": "https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/64/eth.png",
+    "webp32": "https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/32/eth.webp",
+    "webp64": "https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/64/eth.webp",
+    "exchanges": 331,
+    "markets": 5456,
+    "pairs": 2712,
+    "categories": [
+      "smart_contract_platforms"
+    ],
+    "allTimeHighUSD": 4861.288700810894,
+    "circulatingSupply": 119037097,
+    "totalSupply": 119037097,
+    "maxSupply": null,
+    "links": {
+      "website": "https://www.ethereum.org/",
+      "whitepaper": "https://github.com/ethereum/wiki/wiki/White-Paper",
+      "twitter": "https://twitter.com/ethereum",
+      "reddit": "https://reddit.com/r/ethereum",
+      "telegram": null,
+      "discord": "https://discord.com/invite/CetY6Y4",
+      "medium": null,
+      "instagram": null
+    },
+    "code": "ETH",
+    "rate": 1834.9820518439442,
+    "volume": 4168424655,
+    "cap": 218430936499,
+    "delta": {
+      "hour": 0.9996,
+      "day": 1.0005,
+      "week": 1.0055,
+      "month": 0.9743,
+      "quarter": 1.1415,
+      "year": 1.0163
+    }
+  }
+]
