@@ -42,6 +42,7 @@ class OKX_SPOT(BASE_SPOT):
                 # print(result)
                 return result
             except Exception as e:
+                print(e)
                 print(f"Exception caught when calling market_ticker, retrying... [{retries + 1}/{max_retries}]")
                 retries += 1
                 time.sleep(1)  # Wait for 1 second before retrying
@@ -83,6 +84,7 @@ class OKX_SPOT(BASE_SPOT):
                 # print(f"：{result['data'][0]['cnvtPx']}")
                 return result
             except Exception as e:
+                print(e)
                 print(f"Exception caught when calling estimate_quote, retrying... [{retries + 1}/{max_retries}]")
                 retries += 1
                 time.sleep(1)  # Wait for 1 second before retrying
@@ -122,6 +124,7 @@ class OKX_SPOT(BASE_SPOT):
                 # print(f"：{result['data'][0]['cnvtPx']}")
                 return result
             except Exception as e:
+                print(e)
                 print(f"Exception caught when calling estimate_quote, retrying... [{retries + 1}/{max_retries}]")
                 retries += 1
                 time.sleep(1)  # Wait for 1 second before retrying

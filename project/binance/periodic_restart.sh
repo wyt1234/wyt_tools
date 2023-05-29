@@ -12,7 +12,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 SCRIPT_NAME="x_gather_flash_swap.py"
 LOG_FILE="$DIR/x_gather_flash_swap.log"
 # 定义重启间隔（分钟）
-RESTART_INTERVAL=15
+RESTART_INTERVAL=1
 
 # 定义一个函数来处理 SIGINT 信号
 handle_sigint() {
@@ -37,6 +37,7 @@ while true; do
     sleep 5
 
     # 运行新的脚本进程，并直接在终端打印输出和写入日志
+    echo "开始运行脚本：$SCRIPT_NAME"
     python3 $DIR/$SCRIPT_NAME | tee $LOG_FILE &
 
     # 获取 Python 进程的 PID
