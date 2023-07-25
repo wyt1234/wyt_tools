@@ -21,7 +21,7 @@ def mark_text(text, mark_words, color):
 
 
 # Try to process only the first 100 rows to avoid MemoryError
-df_small = df.head(500).copy()    # 前100行
+df_small = df.head(500).copy()  # 前100行
 # df_small = df.copy()  # TODO 全量数据
 
 tqdm.pandas(desc="Processing")
@@ -36,7 +36,7 @@ df_small['人才库匹配简历'] = df_small.apply(
 df_small['人才库匹配简历'] = df_small.apply(lambda row: mark_text(row['人才库匹配简历'], [row['姓名']], 'blue'), axis=1)
 
 # Add an empty column for labels
-df_small['人工标签'] = ''
+df_small['人工标签'] = 1
 
 # Replace '|' with '/' in the DataFrame
 df_small = df_small.replace('\|', '/', regex=True)
@@ -44,8 +44,11 @@ df_small = df_small.replace('\|', '/', regex=True)
 # Display the first few rows of the DataFrame
 df_small.head()
 
+# Add a new column with a sequence of integers starting from 1
+df_small.insert(0, '序号', range(1, 1 + len(df_small)))
+
 # Select the columns to export
-df_small = df_small[['资讯标题', '人才库匹配简历', '姓名', '资讯段落']]
+df_small = df_small[['序号', '资讯标题', '人才库匹配简历', '姓名', '资讯段落', '人工标签']]
 
 # Convert the DataFrame to a markdown string
 markdown_table = df_small.to_markdown(index=False)
