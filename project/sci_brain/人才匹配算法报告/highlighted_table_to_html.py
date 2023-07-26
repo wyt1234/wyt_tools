@@ -1,11 +1,11 @@
 import sys
 import io
-
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
 import pandas as pd
 import re
 from tqdm import tqdm
 import gc
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
 
 '''highlighted_table提速版'''
 
@@ -56,13 +56,18 @@ df_result_styled = df_result.style.set_table_styles([
     {'selector': 'td', 'props': [('width', '20%')]},  # Set the width of the data cells
 ])
 
-# Add a title to the HTML file
+# Add a title to the HTML file and table border
 html_string = '''
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>数据验证集高亮</title>
+    <style>
+        h1 {text-align: center;}
+        table {border-collapse: collapse;}
+        th, td {border: 1px solid black;}
+    </style>
 </head>
 <body>
 <h1>数据验证集高亮</h1>
