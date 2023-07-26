@@ -52,7 +52,7 @@ df_result = df_result[['序号', '资讯标题', '人才库匹配简历', '姓�
 
 # Set the column widths
 df_result_styled = df_result.style.set_table_styles([
-    {'selector': 'th', 'props': [('width', '10%')]},  # Set the width of the header cells
+    {'selector': 'th', 'props': [('width', '20%')]},  # Set the width of the header cells
     {'selector': 'td', 'props': [('width', '20%')]},  # Set the width of the data cells
 ])
 
@@ -65,13 +65,20 @@ html_string = '''
     <title>数据验证集高亮</title>
     <style>
         h1 {text-align: center;}
-        table {border-collapse: collapse;}
-        th, td {border: 1px solid black;}
+        table {
+            border-collapse: collapse;
+            width: 100%; /* Make the table width 100% of its container */
+        }
+        th, td {
+            border: 1px solid black;
+            width: 20%;
+            overflow-wrap: anywhere; /* This will allow words to break and wrap onto the next line */
+        }
     </style>
 </head>
 <body>
 <h1>数据验证集高亮</h1>
-''' + df_result_styled.render() + '</body>\n</html>'
+''' + df_result.to_html(escape=False, index=False) + '</body>\n</html>'
 
 # Save the HTML string to a file
 with open('ref2数据验证集高亮.html', 'w', encoding='utf-8') as file:
