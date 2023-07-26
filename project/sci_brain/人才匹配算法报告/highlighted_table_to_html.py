@@ -15,8 +15,9 @@ df = pd.read_excel("ref2数据验证集.xlsx", nrows=250)
 
 # Define a function to add markdown to a text
 def mark_text(row, column):
-    mark_words = row['重点匹配词'].split('、') + [row['姓名']]
-    colors = ['red'] * len(row['重点匹配词'].split('、')) + ['blue']
+    # split and remove empty strings
+    mark_words = [word for word in row['重点匹配词'].split('、') if word] + [row['姓名']]
+    colors = ['red'] * len([word for word in row['重点匹配词'].split('、') if word]) + ['blue']
     text = row[column]
     for word, color in zip(mark_words, colors):
         pattern = re.compile(f'({word})', re.IGNORECASE)
