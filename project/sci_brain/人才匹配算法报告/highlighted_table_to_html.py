@@ -50,11 +50,23 @@ df_result.insert(0, '序号', range(1, 1 + len(df_result)))
 # Select the columns to export
 df_result = df_result[['序号', '资讯标题', '人才库匹配简历', '姓名', '资讯段落', '人工标签']]
 
-# Convert the DataFrame to an HTML string
-html_string = df_result.to_html(escape=False, index=False, render_links=True)
+# Set the column widths
+df_result_styled = df_result.style.set_table_styles([
+    {'selector': 'th', 'props': [('width', '10%')]},  # Set the width of the header cells
+    {'selector': 'td', 'props': [('width', '20%')]},  # Set the width of the data cells
+])
 
-# Add a <meta> tag to specify the encoding
-html_string = '<meta charset="UTF-8">\n' + html_string
+# Add a title to the HTML file
+html_string = '''
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>数据验证集高亮</title>
+</head>
+<body>
+<h1>数据验证集高亮</h1>
+''' + df_result_styled.render() + '</body>\n</html>'
 
 # Save the HTML string to a file
 with open('ref2数据验证集高亮.html', 'w', encoding='utf-8') as file:

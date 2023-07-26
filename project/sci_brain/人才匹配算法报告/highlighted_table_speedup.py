@@ -11,8 +11,9 @@ df = pd.read_excel("ref2数据验证集.xlsx", nrows=250)
 
 # Define a function to add markdown to a text
 def mark_text(row, column):
-    mark_words = row['重点匹配词'].split('、') + [row['姓名']]
-    colors = ['red'] * len(row['重点匹配词'].split('、')) + ['blue']
+    mark_words = [word for word in row['重点匹配词'].split('、') if word] + [row['姓名']] if row['重点匹配词'] else [
+        row['姓名']]
+    colors = ['red'] * len(mark_words[:-1]) + ['blue']
     text = row[column]
     for word, color in zip(mark_words, colors):
         pattern = re.compile(f'({word})', re.IGNORECASE)
@@ -49,8 +50,12 @@ df_result = df_result[['序号', '资讯标题', '人才库匹配简历', '姓�
 # Convert the DataFrame to a markdown string
 markdown_table = df_result.to_markdown(index=False)
 
+# Use regex to remove unnecessary spaces
+markdown_table_no_spaces = re.sub(' +\|', '|', markdown_table)
+markdown_table_no_spaces = re.sub('\| +', '|', markdown_table_no_spaces)
+
 # Save the markdown string to a file
 with open('ref2数据验证集高亮.md', 'w') as file:
-    file.write(markdown_table)
+    file.write(markdown_table_no_spaces)
 
-print(markdown_table)
+print(markdown_table_no_spaces)
