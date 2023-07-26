@@ -36,6 +36,9 @@ df_small = df_small.replace('\|', '/', regex=True)
 # Strip leading and trailing whitespace from all string type columns
 df_small = df_small.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
 
+# Replace '.' with '<br>' in '人才库匹配简历' column for better readability
+# df_small['人才库匹配简历'] = df_small['人才库匹配简历'].str.replace('。', '。<br>')
+
 # Add a new column with a sequence of integers starting from 1
 df_small.insert(0, '序号', range(1, 1 + len(df_small)))
 
