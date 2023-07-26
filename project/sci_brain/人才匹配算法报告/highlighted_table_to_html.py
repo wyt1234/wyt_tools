@@ -71,8 +71,27 @@ html_string = '''
         }
         th, td {
             border: 1px solid black;
-            width: 20%;
+            text-align: center; /* Center the text in header cells */
             overflow-wrap: anywhere; /* This will allow words to break and wrap onto the next line */
+        }
+        /* Set the widths of the table cells based on their content */
+        th:nth-child(1), td:nth-child(1) {
+            width: 5%;
+        }
+        th:nth-child(2), td:nth-child(2) {
+            width: 15%;
+        }
+        th:nth-child(3), td:nth-child(3) {
+            width: 40%;
+        }
+        th:nth-child(4), td:nth-child(4) {
+            width: 5%;
+        }
+        th:nth-child(5), td:nth-child(5) {
+            width: 30%;
+        }
+        th:nth-child(6), td:nth-child(6) {
+            width: 5%;
         }
     </style>
 </head>
