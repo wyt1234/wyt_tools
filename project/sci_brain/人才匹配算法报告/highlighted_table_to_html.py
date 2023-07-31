@@ -48,6 +48,15 @@ df_result = df_result.replace('\|', '/', regex=True)
 # Add a new column with a sequence of integers starting from 1
 df_result.insert(0, '序号', range(1, 1 + len(df_result)))
 
+'''手工标注的标签'''
+# Add an empty column for labels
+df_result['人工标签'] = '正确✔'
+
+# Modify the '人工标签' column for specific rows
+df_result.loc[[25, 26, 45, 55, 62, 98, 142, 152, 160, 162, 165, 166, 168, 174, 175, 187, 247], '人工标签'] = '错误×'
+df_result.loc[[14, 43, 61, 67, 96, 111, 112, 114, 116, 130, 163, 182, 183, 188, 203, 216, 217, 226, 230, 231,
+               242], '人工标签'] = '无法判断'
+
 # Select the columns to export
 df_result = df_result[['序号', '资讯标题', '人才库匹配简历', '姓名', '资讯段落', '人工标签']]
 
@@ -63,7 +72,7 @@ html_string = '''
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>数据验证集高亮</title>
+    <title>“大模型+正则”人才匹配方法</title>
     <style>
         h1 {text-align: center;}
         table {
@@ -97,7 +106,7 @@ html_string = '''
     </style>
 </head>
 <body>
-<h1>数据验证集高亮</h1>
+<h1>“大模型+正则”人才匹配方法</h1>
 ''' + df_result.to_html(escape=False, index=False) + '</body>\n</html>'
 
 # Save the HTML string to a file
