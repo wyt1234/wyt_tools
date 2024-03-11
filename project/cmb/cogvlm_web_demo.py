@@ -13,20 +13,19 @@ Requirements:
 Note: This demo is ideal for a quick showcase of the CogVLM and CogAgent models. For a more comprehensive and interactive
 experience, refer to the 'composite_demo'.
 """
+import base64
+import json
+
 import gradio as gr
 import os, sys
+
+import requests
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from PIL import Image
 import torch
 import time
-from sat.model.mixins import CachedAutoregressiveMixin
-from sat.mpu import get_model_parallel_world_size
-from sat.model import AutoModel
-
-from utils.utils import chat, llama2_tokenizer, llama2_text_processor_inference, get_image_processor, parse_response
-from utils.models import CogAgentModel, CogVLMModel
 
 DESCRIPTION = '''<h1 style='text-align: center'> <a href="https://github.com/THUDM/CogVLM">CogVLM / CogAgent</a> </h1>'''
 
@@ -54,97 +53,82 @@ def process_image_without_resize(image_prompt):
     return image, filename_grounding
 
 
-from sat.quantization.kernels import quantize
+requests.packages.urllib3.disable_warnings()
+BAD_RESPONSE = "<error></error>"
 
 
-def load_model(args):
-    model, model_args = AutoModel.from_pretrained(
-        args.from_pretrained,
-        args=argparse.Namespace(
-            deepspeed=None,
-            local_rank=0,
-            rank=0,
-            world_size=world_size,
-            model_parallel_size=world_size,
-            mode='inference',
-            fp16=args.fp16,
-            bf16=args.bf16,
-            skip_init=True,
-            use_gpu_initialization=True if (torch.cuda.is_available() and args.quant is None) else False,
-            device='cpu' if args.quant else 'cuda'),
-        overwrite_args={'model_parallel_size': world_size} if world_size != 1 else {}
-    )
-    model = model.eval()
-    assert world_size == get_model_parallel_world_size(), "world size must equal to model parallel size for cli_demo!"
-
-    language_processor_version = model_args.text_processor_version if 'text_processor_version' in model_args else args.version
-    tokenizer = llama2_tokenizer(args.local_tokenizer, signal_type=language_processor_version)
-    image_processor = get_image_processor(model_args.eva_args["image_size"][0])
-    cross_image_processor = get_image_processor(model_args.cross_image_pix) if "cross_image_pix" in model_args else None
-
-    if args.quant:
-        quantize(model, args.quant)
-        if torch.cuda.is_available():
-            model = model.cuda()
-    model.add_mixin('auto-regressive', CachedAutoregressiveMixin())
-
-    text_processor_infer = llama2_text_processor_inference(tokenizer, args.max_length, model.image_length)
-
-    return model, image_processor, cross_image_processor, text_processor_infer
+def image_to_base64(image_path):
+    with open(image_path, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+        return encoded_string.decode('utf-8')
 
 
-def post(
-        input_text,
-        temperature,
-        top_p,
-        top_k,
-        image_prompt,
-        result_previous,
-        hidden_image,
-        state
-):
+def get_response(image_path, question):
+    base64_img = image_to_base64(image_path)
+
+    url = 'http://180.184.41.237:28080/'
+    headers = {
+        'Content-Type': 'application/json',
+    }
+    payload = {
+        "inputs": f"##第 1 轮##\\n\\n问：<img_start>data:image/jpeg;base64,{base64_img}<img_end>这张图是什么\\n\\n答：",
+        "parameters": {
+            "max_new_tokens": 1024,
+            "do_sample": False
+        },
+        "stream": False
+    }
+    try_times = 0
+    while try_times < 3:
+        try_times += 1
+        try:
+            #            response = requests.post(url, headers=headers, stream=True, data=json.dumps(payload), verify=False)
+            response = requests.request("POST", url, headers=headers, data=json.dumps(payload))
+            print(response.text)
+            output = ""
+            if response.status_code == 200:
+
+                for line in response.iter_lines():
+                    if line:
+                        try:
+                            decoded_line = line.decode('utf-8').lstrip("data: ")
+                            # print(decoded_line)
+                            data = json.loads(decoded_line)
+                            output += data["choices"][0]["text"]
+                        except Exception as e:
+                            pass
+                print(output)
+                return output.strip()
+            else:
+                print(f"Received bad status code: {response.status_code}")
+        except requests.exceptions.ConnectionError as errc:
+            print("Error Connecting:", errc)
+        except requests.exceptions.Timeout as errt:
+            print("Timeout Error:", errt)
+        except requests.exceptions.RequestException as err:
+            print("Something Else:", err)
+
+    return BAD_RESPONSE
+
+
+# 修改后的 post 函数
+def post(input_text, temperature, top_p, top_k, image_prompt, result_previous, hidden_image, state):
     result_text = [(ele[0], ele[1]) for ele in result_previous]
     for i in range(len(result_text) - 1, -1, -1):
         if result_text[i][0] == "" or result_text[i][0] == None:
             del result_text[i]
     print(f"history {result_text}")
 
-    global model, image_processor, cross_image_processor, text_processor_infer, is_grounding
-
     try:
-        with torch.no_grad():
-            pil_img, image_path_grounding = process_image_without_resize(image_prompt)
-            response, _, cache_image = chat(
-                image_path="",
-                model=model,
-                text_processor=text_processor_infer,
-                img_processor=image_processor,
-                query=input_text,
-                history=result_text,
-                cross_img_processor=cross_image_processor,
-                image=pil_img,
-                max_length=2048,
-                top_p=top_p,
-                temperature=temperature,
-                top_k=top_k,
-                invalid_slices=text_processor_infer.invalid_slices if hasattr(text_processor_infer,
-                                                                              "invalid_slices") else [],
-                no_prompt=False,
-                args=state['args']
-            )
+        response_text = get_response(image_path=image_prompt, question=input_text)  # 使用API进行推理
+        if response_text == BAD_RESPONSE:
+            raise Exception("Bad response from API")
     except Exception as e:
         print("error message", e)
-        result_text.append((input_text, 'Timeout! Please wait a few minutes and retry.'))
+        result_text.append((input_text, 'Error! Please check the console for more details.'))
         return "", result_text, hidden_image
 
-    answer = response
-    if is_grounding:
-        parse_response(pil_img, answer, image_path_grounding)
-        new_answer = answer.replace(input_text, "")
-        result_text.append((input_text, new_answer))
-        result_text.append((None, (image_path_grounding,)))
-    else:
-        result_text.append((input_text, answer))
+    result_text.append((input_text, response_text))
     print(result_text)
     print('finished')
     return "", result_text, hidden_image
@@ -159,10 +143,6 @@ def clear_fn2(value):
 
 
 def main(args):
-    global model, image_processor, cross_image_processor, text_processor_infer, is_grounding
-    model, image_processor, cross_image_processor, text_processor_infer = load_model(args)
-    is_grounding = 'grounding' in args.from_pretrained
-
     gr.close_all()
 
     with gr.Blocks(css='style.css') as demo:
@@ -212,7 +192,7 @@ def main(args):
         image_prompt.clear(fn=clear_fn2, inputs=clear_button, outputs=[result_text])
 
     # demo.queue(concurrency_count=10)
-    demo.launch()
+    demo.launch(debug=True, show_error=True, server_port=7861)
 
 
 if __name__ == '__main__':
