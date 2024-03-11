@@ -1,18 +1,3 @@
-"""
-This script is a simple web demo of the CogVLM and CogAgent models, designed for easy and quick demonstrations.
-For a more sophisticated user interface, users are encouraged to refer to the 'composite_demo',
-which is built with a more aesthetically pleasing Streamlit framework.
-
-Usage:
-- Use the interface to upload images and enter text prompts to interact with the models.
-
-Requirements:
-- Gradio (only 3.x,4.x is not support) and other necessary Python dependencies must be installed.
-- Proper model checkpoints should be accessible as specified in the script.
-
-Note: This demo is ideal for a quick showcase of the CogVLM and CogAgent models. For a more comprehensive and interactive
-experience, refer to the 'composite_demo'.
-"""
 import base64
 import json
 
@@ -27,17 +12,17 @@ from PIL import Image
 import torch
 import time
 
-DESCRIPTION = '''<h1 style='text-align: center'> <a href="https://github.com/THUDM/CogVLM">CogVLM / CogAgent</a> </h1>'''
+DESCRIPTION = '''<h1 style='text-align: center'> 招行部署版CogVLM（api） </h1>'''
 
-NOTES = '<h3> This app is adapted from <a href="https://github.com/THUDM/CogVLM">https://github.com/THUDM/CogVLM</a>. It would be recommended to check out the repo if you want to see the detail of our model, CogVLM & CogAgent. </h3>'
+# NOTES = '<h3> This app is adapted from <a href="https://github.com/THUDM/CogVLM">https://github.com/THUDM/CogVLM</a>. It would be recommended to check out the repo if you want to see the detail of our model, CogVLM & CogAgent. </h3>'
 
-MAINTENANCE_NOTICE1 = 'Hint 1: If the app report "Something went wrong, connection error out", please turn off your proxy and retry.<br>Hint 2: If you upload a large size of image like 10MB, it may take some time to upload and process. Please be patient and wait.'
+MAINTENANCE_NOTICE1 = '提示 1：如果应用报告“出了点问题，连接错误”，请关闭您的代理并重试。<br>提示 2：如果您上传了像10MB这样的大尺寸图片，上传和处理可能需要一些时间。请耐心等待。'
 
-AGENT_NOTICE = 'Hint 1: To use <strong>Agent</strong> function, please use the <a href="https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L761">prompts for agents</a>.'
+AGENT_NOTICE = '提示 1：要使用<strong>代理</strong>功能，请使用<a href="https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L761">代理提示</a>。'
 
-GROUNDING_NOTICE = 'Hint 2: To use <strong>Grounding</strong> function, please use the <a href="https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L344">prompts for grounding</a>.'
+GROUNDING_NOTICE = '提示 2：要使用<strong>基础</strong>功能，请使用<a href="https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L344">基础提示</a>。'
 
-default_chatbox = [("", "Hi, What do you want to know about this image?")]
+default_chatbox = [("", "Hi, 开始提问吧宝贝")]
 
 model = image_processor = text_processor_infer = None
 
@@ -71,7 +56,7 @@ def get_response(image_path, question):
         'Content-Type': 'application/json',
     }
     payload = {
-        "inputs": f"##第 1 轮##\\n\\n问：<img_start>data:image/jpeg;base64,{base64_img}<img_end>这张图是什么\\n\\n答：",
+        "inputs": f"##第 1 轮##\\n\\n问：<img_start>data:image/jpeg;base64,{base64_img}<img_end>{question}\\n\\n答：",
         "parameters": {
             "max_new_tokens": 1024,
             "do_sample": False
@@ -94,7 +79,7 @@ def get_response(image_path, question):
                             decoded_line = line.decode('utf-8').lstrip("data: ")
                             # print(decoded_line)
                             data = json.loads(decoded_line)
-                            output += data["choices"][0]["text"]
+                            output += data[0]['generated_text']
                         except Exception as e:
                             pass
                 print(output)
@@ -149,13 +134,13 @@ def main(args):
         state = gr.State({'args': args})
 
         gr.Markdown(DESCRIPTION)
-        gr.Markdown(NOTES)
+        # gr.Markdown(NOTES)
 
         with gr.Row():
             with gr.Column(scale=5):
                 with gr.Group():
-                    gr.Markdown(AGENT_NOTICE)
-                    gr.Markdown(GROUNDING_NOTICE)
+                    # gr.Markdown(AGENT_NOTICE)
+                    # gr.Markdown(GROUNDING_NOTICE)
                     input_text = gr.Textbox(label='Input Text',
                                             placeholder='Please enter text prompt below and press ENTER.')
 
@@ -172,7 +157,7 @@ def main(args):
 
             with gr.Column(scale=5):
                 result_text = gr.components.Chatbot(label='Multi-round conversation History',
-                                                    value=[("", "Hi, What do you want to know about this image?")],
+                                                    value=[("", "Hi, 开始提问吧宝贝")],
                                                     height=600)
                 hidden_image_hash = gr.Textbox(visible=False)
 
