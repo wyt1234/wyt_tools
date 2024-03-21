@@ -177,7 +177,7 @@ def main(args):
         image_prompt.clear(fn=clear_fn2, inputs=clear_button, outputs=[result_text])
 
     # demo.queue(concurrency_count=10)
-    demo.launch(debug=True, show_error=True, server_port=7861)
+    demo.launch(debug=True, show_error=True, server_port=7861, server_name='0.0.0.0')
 
 
 if __name__ == '__main__':
